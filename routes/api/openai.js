@@ -56,7 +56,7 @@ router.post('/audio', function (req, res, next) {
     maxBodyLength: Infinity,
     url: 'https://api.openai.com/v1/audio/transcriptions',
     headers: {
-      'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`,
+      'Authorization': `Bearer ${process.env.OPEN_AI_APIKEY}`,
       ...data.getHeaders()
     },
     data: data
