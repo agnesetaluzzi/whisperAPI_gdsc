@@ -3,6 +3,17 @@ const express = require('express');
 const router = express.Router();
 const FormData = require('form-data');
 const fs = require('fs');
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
+
+const storage = multer.diskStorage({
+  destination: 'uploads/',
+  filename: function(req, file, cb) {
+    cb(null, uuidv4() + '.mp3'); // Use the original file name as the saved file name
+  }
+});
+const upload = multer({ storage: storage });
+
 require('dotenv').config();
 
 router.post('/', function (req, res, next) {
@@ -46,9 +57,13 @@ router.post('/', function (req, res, next) {
     });
 });
 
-router.post('/audio', function (req, res, next) {
+router.post('/audio', upload.single('file'), function (req, res, next) {
+  if (!req.file) {
+    return res.status(400).json
+  }
+
   let data = new FormData();
-  data.append('file', fs.createReadStream('./prova.mp3'));
+  data.append('file', fs.createReadStream(req.file.path));
   data.append('model', 'whisper-1');
 
   let config = {
